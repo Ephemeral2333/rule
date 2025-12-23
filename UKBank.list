@@ -1,0 +1,12 @@
+# ===================================
+# NAME: 英国Bage代理链规则
+# AUTHOR: Custom
+# REPO: https://github.com/your-repo
+# UPDATED: 2025-12-23
+# DOMAIN-KEYWORD: 4
+# TOTAL: 4
+# ===================================
+DOMAIN-KEYWORD,coca
+DOMAIN-KEYWORD,metamask
+DOMAIN-KEYWORD,yonder
+DOMAIN-KEYWORD,instarem

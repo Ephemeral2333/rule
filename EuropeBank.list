@@ -1,0 +1,28 @@
+# ===================================
+# NAME: 欧洲节点规则
+# AUTHOR: Custom
+# REPO: https://github.com/your-repo
+# UPDATED: 2025-12-23
+# DOMAIN-KEYWORD: 17
+# DOMAIN-SUFFIX: 1
+# TOTAL: 18
+# ===================================
+DOMAIN-KEYWORD,altery
+DOMAIN-KEYWORD,moneybase
+DOMAIN-KEYWORD,branch
+DOMAIN-KEYWORD,braze
+DOMAIN-KEYWORD,pndsn
+DOMAIN-KEYWORD,curve
+DOMAIN-KEYWORD,siftscience
+DOMAIN-KEYWORD,sardine
+DOMAIN-KEYWORD,26
+DOMAIN-KEYWORD,bybit
+DOMAIN-KEYWORD,bunq
+DOMAIN-KEYWORD,bleap
+DOMAIN-KEYWORD,nexo
+DOMAIN-KEYWORD,kraken
+DOMAIN-KEYWORD,monese
+DOMAIN-KEYWORD,trading212
+DOMAIN-KEYWORD,n26
+DOMAIN-KEYWORD,okx
+DOMAIN-SUFFIX,emb-api.com

@@ -1,0 +1,15 @@
+# ===================================
+# NAME: DIRECT - 直连规则
+# AUTHOR: Custom
+# REPO: https://github.com/your-repo
+# UPDATED: 2025-12-23
+# DOMAIN-KEYWORD: 4
+# DOMAIN-SUFFIX: 2
+# DOMAIN: 1
+# TOTAL: 7
+# ===================================
+DOMAIN-KEYWORD,wise
+DOMAIN-KEYWORD,ifast
+DOMAIN-KEYWORD,binance
+DOMAIN-SUFFIX,cug.edu.cn
+DOMAIN,tw-avatar.s3.eu-central-1.amazonaws.com
