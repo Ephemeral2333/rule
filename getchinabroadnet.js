@@ -20,7 +20,7 @@ $.KEY_campus_body = '@wuhuhu.ChinaBroadnet.campus_body'
     return
   }
 
-  if (url.includes('wx.10099.com.cn')) {
+  if (url.includes('qryUserInfo')) {
     $.log('📡 匹配到主接口')
     const result = $.setdata(access, $.KEY_access) && $.setdata(body, $.KEY_body)
     if (result) {
@@ -30,7 +30,7 @@ $.KEY_campus_body = '@wuhuhu.ChinaBroadnet.campus_body'
       $.log('❌ 主接口凭证写入失败')
       $.msg($.name, '❌ 主接口凭证写入失败', '请检查 BoxJS 是否正常运行')
     }
-  } else if (url.includes('app.10099.com.cn')) {
+  } else if (url.includes('qryUserRes')) {
     $.log('📡 匹配到校园流量接口')
     const result = $.setdata(access, $.KEY_campus_access) && $.setdata(body, $.KEY_campus_body)
     if (result) {
