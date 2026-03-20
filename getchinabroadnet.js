@@ -38,7 +38,7 @@ $.KEY_campus_body = '@wuhuhu.ChinaBroadnet.campus_body'
     $.setdata(body, $.KEY_campus_body)
     const stored = JSON.parse($persistentStore.read('wuhuhu') || '{}')
     if (stored?.ChinaBroadnet?.campus_access === access && stored?.ChinaBroadnet?.campus_body === body) {
-      $.log('✅ 校园流量凭证写入成功')
+      $.log('✅ 从BoxJS获取校园流量凭证写入成功')
       $.msg($.name, '✅ 校园流量凭证获取成功', `access: ${access.substring(0, 8)}...`)
     } else {
       $.log('❌ 校园流量凭证写入失败')
