@@ -1,0 +1,27 @@
+{
+    "id": "wuhuhu.app.sub",
+    "name": "wuhuhu",
+    "author": "@wuhuhu",
+    "icon": "https://github.com/livinmoon/study/raw/main/livinmoon.png",
+    "repo": "https://github.com/livinmoon/study",
+    "apps": [
+      {
+        "id": "wuhuhu.ChinaBroadnet",
+        "name": "中国广电",
+        "keys": [
+          "@wuhuhu.ChinaBroadnet.url",
+          "@wuhuhu.ChinaBroadnet.access",
+          "@wuhuhu.ChinaBroadnet.body",
+          "@wuhuhu.ChinaBroadnet.campus_access",
+          "@wuhuhu.ChinaBroadnet.campus_body"
+        ],
+        "author": "@wuhuhu",
+        "script": "https://github.com/livinmoon/study/raw/main/Scripts/ChinaBroadnet/ChinaBroadnet.js",
+        "repo": "https://github.com/livinmoon/study/tree/main/Scripts/ChinaBroadnet",
+        "icons": [
+          "https://github.com/livinmoon/study/raw/main/Scripts/ChinaBroadnet/ChinaBroadnet.png",
+          "https://github.com/livinmoon/study/raw/main/Scripts/ChinaBroadnet/ChinaBroadnet.png"
+        ]
+      }
+    ]
+  }
