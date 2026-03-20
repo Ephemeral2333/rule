@@ -196,9 +196,6 @@ class Widget extends DmYY {
       if (!this.access || !this.body) {
         throw '主接口凭证缺失，请打开广电 App 触发抓包';
       }
-      if (!this.campusAccess || !this.campusBody) {
-        throw '校园流量凭证缺失，请进入广电 App 流量详情页触发抓包';
-      }
   
       // 主接口
       const mainReq = new Request(mainUrl);
@@ -213,37 +210,43 @@ class Widget extends DmYY {
         throw '主接口错误/cookie失效';
       }
   
-      // 校园流量接口（动态凭证）
-      const campusReq = new Request(campusUrl);
-      campusReq.headers = {
-        'access': this.campusAccess,
-        'content-type': 'application/json'
-      };
-      campusReq.method = 'POST';
-      campusReq.body = JSON.stringify({ "data": this.campusBody });
-      const campusData = await campusReq.loadJSON();
-      if (campusData.status !== '000000') {
-        throw '校园流量接口异常/cookie失效';
-      }
-  
-      // 合并数据逻辑
       const data = userInfo.data.userData;
-      const campusRes = campusData.data.intfResultBean;
-  
-      // 计算校园流量
-      let campusTotal = 0, campusUsed = 0;
-      campusRes.userResList
-        .filter(item => item.discntName === '校园流量')
-        .forEach(item => {
-          const total = parseInt(item.highFee) || 0;
-          const used = parseInt(item.balance) || 0;
-          campusTotal += total;
-          campusUsed += used;
-        });
-  
-      // 更新总流量
-      data.flowAll = (parseInt(data.flowAll) || 0) + campusTotal;
-      data.flow = (parseInt(data.flow) || 0) + campusUsed;
+
+      // 校园流量接口（可选，有凭证时才请求）
+      if (this.campusAccess && this.campusBody) {
+        try {
+          const campusReq = new Request(campusUrl);
+          campusReq.headers = {
+            'access': this.campusAccess,
+            'content-type': 'application/json'
+          };
+          campusReq.method = 'POST';
+          campusReq.body = JSON.stringify({ "data": this.campusBody });
+          const campusData = await campusReq.loadJSON();
+
+          if (campusData.status === '000000') {
+            const campusRes = campusData.data.intfResultBean;
+            let campusTotal = 0, campusUsed = 0;
+            campusRes.userResList
+              .filter(item => item.discntName === '校园流量')
+              .forEach(item => {
+                const total = parseInt(item.highFee) || 0;
+                const used = parseInt(item.balance) || 0;
+                campusTotal += total;
+                campusUsed += used;
+              });
+            data.flowAll = (parseInt(data.flowAll) || 0) + campusTotal;
+            data.flow = (parseInt(data.flow) || 0) + campusUsed;
+            console.log('校园流量合并成功', { campusUsed, campusTotal });
+          } else {
+            console.log('校园流量接口异常/cookie失效，跳过合并');
+          }
+        } catch (campusErr) {
+          console.log(`校园流量请求失败，跳过合并: ${campusErr}`);
+        }
+      } else {
+        console.log('未配置校园流量凭证，跳过校园流量合并');
+      }
   
       // 更新显示数据
       this.fee.number = (data.fee / 100).toFixed(2);
@@ -252,11 +255,7 @@ class Widget extends DmYY {
       this.voice.number = data.voice;
       this.voice.percent = ((data.voice / data.voiceAll) * 100).toFixed(2);
   
-      console.log('数据合并成功', {
-        baseFlow: userInfo.data.userData.flow,
-        campusUsed,
-        totalFlow: data.flow
-      });
+      console.log('数据获取成功', { flow: data.flow, flowAll: data.flowAll });
   
     } catch (e) {
       console.log(`请求失败: ${e}`);
@@ -1435,9 +1434,24 @@ class Widget extends DmYY {
             title: '代理缓存',
             type: 'input',
             onClick: async () => {
-              const result = await this.setCacheBoxJSData(widgetInitConfig)
-              console.log('代理缓存读取结果:', JSON.stringify(result))
-              console.log('settings:', JSON.stringify(this.settings))
+              // 逐 key 单独请求，兼容手动填写和 rewrite 自动写入两种来源
+              const keys = {
+                access: '@wuhuhu.ChinaBroadnet.access',
+                body: '@wuhuhu.ChinaBroadnet.body',
+                campusAccess: '@wuhuhu.ChinaBroadnet.campus_access',
+                campusBody: '@wuhuhu.ChinaBroadnet.campus_body',
+              };
+              for (const [settingKey, boxjsKey] of Object.entries(keys)) {
+                const val = await this.getCache(boxjsKey, false);
+                if (val) {
+                  this.settings[settingKey] = val;
+                  console.log(`读取成功: ${settingKey} = ${val.substring(0, 20)}...`);
+                } else {
+                  console.log(`读取为空: ${settingKey} (${boxjsKey})`);
+                }
+              }
+              this.saveSettings();
+              console.log('settings:', JSON.stringify(this.settings));
             },
           },
         ],
