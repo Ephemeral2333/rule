@@ -1422,7 +1422,9 @@ class Widget extends DmYY {
                 '读取 BoxJS 缓存信息',
                 {
                   access: 'access',
-                  body: 'body.data'
+                  body: 'body.data',
+                  campusAccess: 'campusAccess',
+                  campusBody: 'campusBody'
                 },
                 );
             }

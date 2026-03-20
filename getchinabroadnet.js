@@ -22,8 +22,11 @@ $.KEY_campus_body = '@wuhuhu.ChinaBroadnet.campus_body'
 
   if (url.includes('qryUserInfo')) {
     $.log('📡 匹配到主接口')
-    const result = $.setdata(access, $.KEY_access) && $.setdata(body, $.KEY_body)
-    if (result) {
+    $.setdata(access, $.KEY_access)
+    $.setdata(body, $.KEY_body)
+    const savedAccess = $.getdata($.KEY_access)
+    const savedBody = $.getdata($.KEY_body)
+    if (savedAccess === access && savedBody === body) {
       $.log('✅ 主接口凭证写入成功')
       $.msg($.name, '✅ 主接口凭证获取成功', `access: ${access.substring(0, 8)}...`)
     } else {
@@ -32,19 +35,18 @@ $.KEY_campus_body = '@wuhuhu.ChinaBroadnet.campus_body'
     }
   } else if (url.includes('qryUserRes')) {
     $.log('📡 匹配到校园流量接口')
-    const result = $.setdata(access, $.KEY_campus_access) && $.setdata(body, $.KEY_campus_body)
-    if (result) {
+    $.setdata(access, $.KEY_campus_access)
+    $.setdata(body, $.KEY_campus_body)
+    const savedAccess = $.getdata($.KEY_campus_access)
+    const savedBody = $.getdata($.KEY_campus_body)
+    if (savedAccess === access && savedBody === body) {
       $.log('✅ 校园流量凭证写入成功')
       $.msg($.name, '✅ 校园流量凭证获取成功', `access: ${access.substring(0, 8)}...`)
     } else {
       $.log('❌ 校园流量凭证写入失败')
       $.msg($.name, '❌ 校园流量凭证写入失败', '请检查 BoxJS 是否正常运行')
     }
-  } else {
-    $.log(`⚠️ URL 未匹配任何规则: ${url}`)
-    $.msg($.name, '⚠️ URL 未匹配', `${url}`)
   }
-
   $.log('==============================')
 })()
   .catch((e) => {
