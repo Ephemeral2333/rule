@@ -1435,7 +1435,9 @@ class Widget extends DmYY {
             title: '代理缓存',
             type: 'input',
             onClick: async () => {
-              await this.setCacheBoxJSData(widgetInitConfig);
+              const result = await this.setCacheBoxJSData(widgetInitConfig)
+              console.log('代理缓存读取结果:', JSON.stringify(result))
+              console.log('settings:', JSON.stringify(this.settings))
             },
           },
         ],
