@@ -21,15 +21,29 @@ $.KEY_campus_body = '@wuhuhu.ChinaBroadnet.campus_body'
   }
 
   if (url.includes('qryUserInfo')) {
-    $persistentStore.write(access, '@wuhuhu.ChinaBroadnet.access')
-    $persistentStore.write(body, '@wuhuhu.ChinaBroadnet.body')
-    $.log('✅ 主接口凭证写入成功')
-    $.msg($.name, '✅ 主接口凭证获取成功', `access: ${access.substring(0, 8)}...`)
+    $.log('📡 匹配到主接口')
+    $.setdata(access, $.KEY_access)
+    $.setdata(body, $.KEY_body)
+    const stored = JSON.parse($persistentStore.read('wuhuhu') || '{}')
+    if (stored?.ChinaBroadnet?.access === access && stored?.ChinaBroadnet?.body === body) {
+      $.log('✅ 主接口凭证写入成功')
+      $.msg($.name, '✅ 主接口凭证获取成功', `access: ${access.substring(0, 8)}...`)
+    } else {
+      $.log('❌ 主接口凭证写入失败')
+      $.msg($.name, '❌ 主接口凭证写入失败', '请检查 BoxJS 是否正常运行')
+    }
   } else if (url.includes('qryUserRes')) {
-    $persistentStore.write(access, '@wuhuhu.ChinaBroadnet.campus_access')
-    $persistentStore.write(body, '@wuhuhu.ChinaBroadnet.campus_body')
-    $.log('✅ 校园流量凭证写入成功')
-    $.msg($.name, '✅ 校园流量凭证获取成功', `access: ${access.substring(0, 8)}...`)
+    $.log('📡 匹配到校园流量接口')
+    $.setdata(access, $.KEY_campus_access)
+    $.setdata(body, $.KEY_campus_body)
+    const stored = JSON.parse($persistentStore.read('wuhuhu') || '{}')
+    if (stored?.ChinaBroadnet?.campus_access === access && stored?.ChinaBroadnet?.campus_body === body) {
+      $.log('✅ 从BoxJS获取校园流量凭证写入成功')
+      $.msg($.name, '✅ 校园流量凭证获取成功', `access: ${access.substring(0, 8)}...`)
+    } else {
+      $.log('❌ 校园流量凭证写入失败')
+      $.msg($.name, '❌ 校园流量凭证写入失败', '请检查 BoxJS 是否正常运行')
+    }
   }
   $.log('==============================')
 })()
