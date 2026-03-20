@@ -24,9 +24,8 @@ $.KEY_campus_body = '@wuhuhu.ChinaBroadnet.campus_body'
     $.log('📡 匹配到主接口')
     $.setdata(access, $.KEY_access)
     $.setdata(body, $.KEY_body)
-    const savedAccess = $.getdata($.KEY_access)
-    const savedBody = $.getdata($.KEY_body)
-    if (savedAccess === access && savedBody === body) {
+    const stored = JSON.parse($persistentStore.read('wuhuhu') || '{}')
+    if (stored?.ChinaBroadnet?.access === access && stored?.ChinaBroadnet?.body === body) {
       $.log('✅ 主接口凭证写入成功')
       $.msg($.name, '✅ 主接口凭证获取成功', `access: ${access.substring(0, 8)}...`)
     } else {
@@ -37,9 +36,8 @@ $.KEY_campus_body = '@wuhuhu.ChinaBroadnet.campus_body'
     $.log('📡 匹配到校园流量接口')
     $.setdata(access, $.KEY_campus_access)
     $.setdata(body, $.KEY_campus_body)
-    const savedAccess = $.getdata($.KEY_campus_access)
-    const savedBody = $.getdata($.KEY_campus_body)
-    if (savedAccess === access && savedBody === body) {
+    const stored = JSON.parse($persistentStore.read('wuhuhu') || '{}')
+    if (stored?.ChinaBroadnet?.campus_access === access && stored?.ChinaBroadnet?.campus_body === body) {
       $.log('✅ 校园流量凭证写入成功')
       $.msg($.name, '✅ 校园流量凭证获取成功', `access: ${access.substring(0, 8)}...`)
     } else {
