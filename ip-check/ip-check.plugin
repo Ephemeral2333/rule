@@ -4,4 +4,4 @@
 #!icon = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/IP_Address.png
 
 [script]
-generic script-path=ip-check.js, tag=节点IP查询, timeout=20, img-url=location.fill.viewfinder.system
+generic script-path=https://raw.githubusercontent.com/Ephemeral2333/rule/refs/heads/main/ip-check/ip-check.js, tag=节点IP查询, timeout=20, img-url=location.fill.viewfinder.system
