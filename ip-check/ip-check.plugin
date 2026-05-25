@@ -1,0 +1,7 @@
+#!name = 节点 IP 查询
+#!desc = 长按节点查询该节点的落地 IP、ISP 及地理位置
+#!author = Ephemeral2333
+#!icon = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/IP_Address.png
+
+[script]
+generic script-path=ip-check.js, tag=节点IP查询, timeout=20, img-url=location.fill.viewfinder.system
