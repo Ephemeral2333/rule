@@ -1,94 +1,86 @@
 /**
  * 节点落地 IP 查询
  * 类型: generic — 长按节点时触发
- * $environment.params.node     → 被长按的节点名称
- * $environment.params.nodeInfo → 节点简洁信息 { name, address, port, type, tls }
- * 请求中指定 node 字段 → 强制让该请求走被长按的节点出去，拿到落地IP
+ *
+ * [script]
+ * generic script-path=ip-check.js, tag=节点IP查询, timeout=20, img-url=location.fill.viewfinder.system
  */
 
-const APIS = [
+var nodeName = $environment.params.node;
+var nodeInfo  = $environment.params.nodeInfo || {};
+
+var FLAGS = {
+  CN:"🇨🇳", HK:"🇭🇰", TW:"🇨🇳", JP:"🇯🇵", KR:"🇰🇷",
+  SG:"🇸🇬", US:"🇺🇸", GB:"🇬🇧", UK:"🇬🇧", DE:"🇩🇪",
+  FR:"🇫🇷", NL:"🇳🇱", CA:"🇨🇦", AU:"🇦🇺", RU:"🇷🇺",
+  IN:"🇮🇳", TR:"🇹🇷", BR:"🇧🇷", TH:"🇹🇭", MY:"🇲🇾",
+  PH:"🇵🇭", ID:"🇮🇩", VN:"🇻🇳",
+};
+
+function getFlag(code) {
+  if (!code) return "";
+  return FLAGS[code.toUpperCase()] || code.toUpperCase();
+}
+
+function buildHTML(ip, country, code, region, org) {
+  var flag = getFlag(code);
+  var rows = "";
+  rows += "<b>🌐 落地 IP</b>　" + ip + "<br/>";
+  if (country) rows += "<b>🗺 国家</b>　　" + flag + " " + country + "<br/>";
+  if (region)  rows += "<b>📍 地区</b>　　" + region + "<br/>";
+  if (org)     rows += "<b>🏢 ISP</b>　　 " + org + "<br/>";
+  rows += "<b>📡 节点</b>　　" + nodeName + "<br/>";
+  if (nodeInfo.address) rows += "<b>🔗 入口</b>　　" + nodeInfo.address + ":" + (nodeInfo.port || "") + "<br/>";
+  if (nodeInfo.type)    rows += "<b>⚙️ 协议</b>　　" + nodeInfo.type + "<br/>";
+  return '<p style="text-align:center;font-family:-apple-system;font-size:medium;line-height:1.8;">' + rows + '</p>';
+}
+
+function buildErrorHTML() {
+  return '<p style="text-align:center;font-family:-apple-system;font-size:large;"><b>🛑 查询失败</b><br/>节点无响应或连接超时</p>';
+}
+
+// 依次尝试多个 API，任一成功即返回结果
+var apis = [
   "https://api.ip.sb/geoip",
   "https://ipinfo.io/json",
   "https://ipapi.co/json/"
 ];
+var apiIndex = 0;
 
-const nodeName = $environment.params.node;
-const nodeInfo = $environment.params.nodeInfo || {};
+function tryNextAPI() {
+  if (apiIndex >= apis.length) {
+    // 全部失败
+    $done({ title: "❓ " + nodeName, htmlMessage: buildErrorHTML() });
+    return;
+  }
 
-const FLAGS = new Map([
-  ["CN","🇨🇳"],["HK","🇭🇰"],["TW","🇨🇳"],["JP","🇯🇵"],["KR","🇰🇷"],
-  ["SG","🇸🇬"],["US","🇺🇸"],["UK","🇬🇧"],["GB","🇬🇧"],["DE","🇩🇪"],
-  ["FR","🇫🇷"],["NL","🇳🇱"],["CA","🇨🇦"],["AU","🇦🇺"],["RU","🇷🇺"],
-  ["IN","🇮🇳"],["TR","🇹🇷"],["BR","🇧🇷"],["AR","🇦🇷"],["MX","🇲🇽"],
-  ["TH","🇹🇭"],["MY","🇲🇾"],["PH","🇵🇭"],["ID","🇮🇩"],["VN","🇻🇳"],
-]);
+  var url = apis[apiIndex];
+  apiIndex++;
 
-function getFlag(code) {
-  if (!code) return "";
-  return FLAGS.get(code.toUpperCase()) || code.toUpperCase();
-}
-
-function httpGet(url, node) {
-  return new Promise((resolve) => {
-    $httpClient.get(
-      { url, node, headers: { "User-Agent": "Mozilla/5.0" }, timeout: 8000 },
-      (error, response, data) => {
-        if (error || !data) { resolve(null); return; }
-        try { resolve(JSON.parse(data)); } catch { resolve(null); }
+  $httpClient.get(
+    { url: url, node: nodeName, headers: { "User-Agent": "Mozilla/5.0" }, timeout: 8000 },
+    function(error, response, data) {
+      if (error || !data) {
+        tryNextAPI();
+        return;
       }
-    );
-  });
-}
+      var res;
+      try { res = JSON.parse(data); } catch(e) { tryNextAPI(); return; }
+      if (!res || !res.ip) { tryNextAPI(); return; }
 
-async function queryLandingIP() {
-  for (const url of APIS) {
-    const res = await httpGet(url, nodeName);
-    if (res && res.ip) {
-      return {
-        ip:      res.ip,
-        country: res.country_name || res.country || "",
-        code:    res.country_code  || res.country || "",
-        region:  res.region        || res.city    || "",
-        org:     res.org           || res.organization || res.asn || "",
-      };
+      var ip      = res.ip || "";
+      var country = res.country_name  || res.country  || "";
+      var code    = res.country_code  || res.country  || "";
+      var region  = res.region        || res.city     || "";
+      var org     = res.org           || res.organization || res.asn || "";
+      var flag    = getFlag(code);
+
+      $done({
+        title: flag + " " + nodeName,
+        htmlMessage: buildHTML(ip, country, code, region, org)
+      });
     }
-  }
-  return null;
+  );
 }
 
-function buildHTML(info) {
-  if (!info) {
-    return `<p style="text-align:center;font-family:-apple-system;font-size:large;">
-      <b>🛑 查询失败</b><br/>节点无响应或连接超时
-    </p>`;
-  }
-
-  const flag    = getFlag(info.code);
-  const country = info.country ? `${flag} ${info.country}` : flag;
-  const region  = info.region  ? `📍 ${info.region}`  : "";
-  const org     = info.org     ? `🏢 ${info.org}`     : "";
-
-  const rows = [
-    `<b>🌐 落地 IP</b>　${info.ip}`,
-    country ? `<b>🗺 国家</b>　　${country}` : "",
-    region  ? `<b>📍 地区</b>　　${info.region}` : "",
-    org     ? `<b>🏢 ISP</b>　　 ${info.org}` : "",
-    `<b>📡 节点</b>　　${nodeName}`,
-    nodeInfo.address ? `<b>🔗 入口</b>　　${nodeInfo.address}:${nodeInfo.port || ""}` : "",
-    nodeInfo.type    ? `<b>⚙️ 协议</b>　　${nodeInfo.type}` : "",
-  ].filter(Boolean).join("<br/>");
-
-  return `<p style="text-align:center;font-family:-apple-system;font-size:medium;line-height:1.8;">
-    ${rows}
-  </p>`;
-}
-
-(async () => {
-  const info = await queryLandingIP();
-  const flag = info ? getFlag(info.code) : "❓";
-
-  $done({
-    title: `${flag} ${nodeName}`,
-    htmlMessage: buildHTML(info),
-  });
-})();
+tryNextAPI();
