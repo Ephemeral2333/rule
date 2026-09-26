@@ -38,3 +38,17 @@ DOMAIN-SUFFIX,cryptolinkapp.com
 DOMAIN-SUFFIX,mexccex.com
 DOMAIN-SUFFIX,mexcsite.com
 DOMAIN-SUFFIX,mx-exchange.co
+
+
+# coin.ph
+DOMAIN-SUFFIX,coins.ph
+DOMAIN-SUFFIX,coins.xyz
+DOMAIN-SUFFIX,coinsph.zendesk.com
+DOMAIN-SUFFIX,coinsapp.net
+
+# maya
+DOMAIN-KEYWORD,maya
+DOMAIN-SUFFIX,voyagerapis.com
+
+# globe
+DOMAIN-SUFFIX,globe.com.ph
