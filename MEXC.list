@@ -49,6 +49,8 @@ DOMAIN-SUFFIX,coinsapp.net
 # maya
 DOMAIN-KEYWORD,maya
 DOMAIN-SUFFIX,voyagerapis.com
+DOMAIN-SUFFIX,clevertap-prod.com
+DOMAIN-SUFFIX,sendbird.com
 
 # globe
 DOMAIN-SUFFIX,globe.com.ph
